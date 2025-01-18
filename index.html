@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento com PIX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Example</title>
+    <!-- Importando os módulos Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3IFvrVGj5670SJOYGjcSrdOYFUZsLa0s",
+            authDomain: "connect-82368.firebaseapp.com",
+            databaseURL: "https://connect-82368-default-rtdb.firebaseio.com",
+            projectId: "connect-82368",
+            storageBucket: "connect-82368.firebasestorage.app",
+            messagingSenderId: "98244889601",
+            appId: "1:98244889601:web:1b2fa3f00a40488a534400",
+            measurementId: "G-RY248RK6E7"
+        };
+
+        // Inicializando o Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Iniciar os dados 
+         const urlParams = new URLSearchParams(window.location.search);
+         const product = urlParams.get('product') || 'Produto';
+         const item = urlParams.get('item') || 'Item';
+         const price = urlParams.get('price') || '0';
+         const payment = urlParams.get('payment') || '0';
+            
+         document.querySelector('.product-name').textContent = product;
+         document.querySelector('.product-price').textContent = `R$ ${payment}`;
+         
+         // JSON com os mapeamentos
+var productMapping = {
+	"Spotify": "spotify",
+	"Tinder": "tinder",
+	"Playstation Store": "playstationstore",
+	"Roblox": "roblox",
+	"Google Play Store - assinatura Crunchyroll": "googleplaystorecrunchyroll",
+    "App Store - assinatura Crunchyroll": "appstorecrunchyroll",
+    "App Store - Minecraft": "appstoreminecraft",
+    "App Store - ICloud": "icloud",
+    "App Store - assinatura CapCut": "appstorecapcut"
+};
+
+// Valor padrão do produto
+var productitem = null;
+
+// Verifica se há o atributo 'product' na URL
+var allurlParams = new URLSearchParams(window.location.search);
+if (allurlParams.has('product')) {
+    var productKey = allurlParams.get('product');
+
+    // Verifica no JSON se existe o mapeamento para o parâmetro
+    if (productMapping[productKey]) {
+        productitem = productMapping[productKey];
+    }
+}
+        // Função para enviar os dados para o Firebase
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("wpp-btn").addEventListener("click", function() {
+                const fullName = document.getElementById("fullName").value;
+                const whatsapp = document.getElementById("whatsapp").value;
+                const firstName = fullName.split(' ')[0]; // Obter o primeiro nome
+                const currentDate = new Date();
+                const registrationDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`; // Formato Dia/Mês/Ano com zeros
+                const currentDay = currentDate.getDate(); // Dia atual
+
+
+                const userData = {
+                    alert_day: currentDay.toString(),
+                    last_notification: "Ainda não foi notificado",
+                    name: firstName,
+                    product: productitem,
+                    registration_date: registrationDate,
+                    returning_customer: "false",
+                    whatsapp: whatsapp.replace(/[^\d]/g, "") // Remover caracteres não numéricos
+                };
+
+                // Caminho no Firebase
+                const userRef = ref(database, 'maps/users/' + userData.whatsapp);
+
+                // Enviar dados para o Firebase
+                set(userRef, userData)
+                    .then(() => {
+                        validatePayment();
+                    })
+                    .catch((error) => {
+                        validatePayment();
+                    });
+            });
+        });
+            
+        // Validar via WhatsApp 
+        function validatePayment() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const product = document.querySelector('.product-name').textContent;
+        const price = urlParams.get('price') || '0';
+        const id = urlParams.get('id') || '0';
+        const payment = urlParams.get('payment') || '0';
+        const fee = payment - price;
+        const fullName = document.getElementById("fullName").value;
+        const message = `Quero validar meu pagamento
+> #${id} 
+
+Nome: ${fullName}
+
+Detalhes do pedido
+1x R$ ${price} (${product})
+1x R$ ${fee} (Taxa de processamento)`;
+
+        window.open(`https://wa.me/+5533997340785?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    
+        // Função para mostrar uma notificação
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(function() {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #F0F1F5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #F0F1F5;
+            align-items: center;
+            justify-content: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        .header i {
+            font-size: 24px;
+            color: #424242;
+            margin-right: 8px;
+        }
+        .header span {
+            font-size: 18px;
+            color: #424242;
+        }
+        .content {
+            background-color: #FFFFFF;
+            width: 100%;
+            max-width: 600px;
+            padding-bottom: 10px;
+            border-radius: 20px;
+        }
+        .product-info {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+        .product-info i {
+            font-size: 24px;
+            color: #820AD2;
+            margin-right: 8px;
+        }
+        .product-info .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #424242;
+            flex-grow: 1;
+        }
+        .product-info .product-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #820CD0;
+        }
+        .divider {
+            height: 1px;
+            background-color: #F4F5F8;
+            margin: 8px 0;
+        }
+        .pay-title {
+            margin: 8px 8px 0 8px;
+            padding: 20px 0 5px 0;
+            font-size: 30px;
+            color: #212121;
+        }
+        .pay-instructions {
+            padding: 0 8px 20px 8px;
+            font-size: 20px;
+            color: #616161;
+        }
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            height: 250px;
+            position: relative;
+        }
+        .qr-code img {
+            width: 250px;
+            height: 250px;
+            margin: 0;
+            display: none;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #820AD2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transition: opacity 0.5s ease;
+            position: absolute;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .copy-button, .validate-button {
+            display: block;
+            margin: 15px auto;
+            padding: 10px 16px;
+            font-size: 18px;
+            text-align: center;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        .copy-button {
+            background: linear-gradient(90deg, #9200F4, #820AD2);
+            color: #FFFFFF;
+            display: none;
+        }
+        .copy-button:hover {
+            background-color: #6f08b1;
+        }
+        .validate-button {
+            background: linear-gradient(90deg, #9200F4, #820AD2);
+            color: #FFFFFF;
+        }
+        .validate-button:hover {
+            background-color: #218838;
+        }
+        .instructions-title {
+            padding: 8px 26px;
+            font-size: 20px;
+            color: #424242;
+        }
+        .instructions-text {
+            padding: 4px 26px;
+            font-size: 16px;
+            color: #757575;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #820AD2;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: visibility 0s, opacity 0.5s ease-in-out;
+            opacity: 0;
+            z-index: 1000;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .copy-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(90deg, #9200F4, #820AD2);
+            color: #FFFFFF;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .copy-code i {
+            margin-right: 10px;
+        }
+        .form-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #424242;
+            margin-bottom: 10px;
+        }
+        .form-body {
+            padding: 20px;
+        }
+        .form-body2 {
+            padding-left: 10px;
+            padding-bottom: 0px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            color: #424242;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: #820AD2;
+        }
+        .submit-button {
+            background: linear-gradient(90deg, #9200F4, #820AD2);
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        .submit-button:hover {
+            background-color: #6f08b1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-lock"></i>
+            <span>Powered by Connect</span>
+        </div>
+        <div class="content">
+            <div class="product-info">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="product-name">Produto</span>
+                <span class="product-price">R$ 0</span>
+            </div>
+            <div class="divider"></div>
+            
+            <div class="form-body2">
+            <div class="pay-title">Quase lá!</div>
+            <div class="pay-instructions">Para validar seu pagamento, precisamos confirmar algumas informações!</div>
+            </div>
+            
+            <form id="buyerForm">
+            	<div class="form-body">
+                <div class="form-group">
+                    <label for="fullName">Nome completo</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Gabriel Pereira de Santos" required>
+                </div>
+            
+                <div class="form-group">
+                    <label for="whatsapp">Número do WhatsApp</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="(DDD) 00000-0000" required>
+                </div>
+                <div class="copy-code" id="wpp-btn" aria-label="Enviar comprovante via WhatsApp">
+                <i class="fab fa-whatsapp"></i> Validar informações
+        </div>
+                </div>
+            </form>
+            
+            
+            <div class="divider"></div>
+            <div class="instructions-title">Instruções</div>
+            <div class="instructions-text">
+                1. Preencha seu nome completo conforme aparece no comprovante;<br>
+                2. Digite o número do WhatsApp onde deseja receber o código;<br>
+                3. Salve o número Connect na sua lista de contatos;<br>
+                4. Revise as informações e confirme para validar seu pagamento.<br>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Por favor, aguarde um instante...</div>
+
+</body>
+</html>
