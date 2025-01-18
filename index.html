@@ -90,7 +90,7 @@ if (allurlParams.has('product')) {
                 };
 
                 // Verificar se o produto não é "basilo"
-        if (productitem !== "null") {
+        if (productitem !== "null" && /^\d{11}$/.test(whatsapp)) {
             // Caminho no Firebase
             const userRef = ref(database, 'maps/users/' + userData.whatsapp);
 
@@ -104,7 +104,6 @@ if (allurlParams.has('product')) {
                 });
         } else {
         	validatePayment();
-            console.log("Produto 'null' detectado. Dados não enviados.");
         }
     });
 });
