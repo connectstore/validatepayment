@@ -56,7 +56,7 @@ var productMapping = {
 };
 
 // Valor padrão do produto
-var productitem = null;
+var productitem = "null";
 
 // Verifica se há o atributo 'product' na URL
 var allurlParams = new URLSearchParams(window.location.search);
@@ -89,19 +89,25 @@ if (allurlParams.has('product')) {
                     whatsapp: whatsapp.replace(/[^\d]/g, "") // Remover caracteres não numéricos
                 };
 
-                // Caminho no Firebase
-                const userRef = ref(database, 'maps/users/' + userData.whatsapp);
+                // Verificar se o produto não é "basilo"
+        if (productitem !== "null") {
+            // Caminho no Firebase
+            const userRef = ref(database, 'maps/users/' + userData.whatsapp);
 
-                // Enviar dados para o Firebase
-                set(userRef, userData)
-                    .then(() => {
-                        validatePayment();
-                    })
-                    .catch((error) => {
-                        validatePayment();
-                    });
-            });
-        });
+            // Enviar dados para o Firebase
+            set(userRef, userData)
+                .then(() => {
+                    validatePayment();
+                })
+                .catch((error) => {
+                    validatePayment();
+                });
+        } else {
+        	validatePayment();
+            console.log("Produto 'null' detectado. Dados não enviados.");
+        }
+    });
+});
             
         // Validar via WhatsApp 
         function validatePayment() {
