@@ -49,7 +49,6 @@ var productMapping = {
 	"Playstation Store": "playstationstore",
 	"Roblox": "roblox",
 	"Netflix": "netflix",
-	"App Store": "appstore",
 	"Google Play Store - assinatura Crunchyroll": "googleplaystorecrunchyroll",
     "App Store - assinatura Crunchyroll": "appstorecrunchyroll",
     "App Store - Minecraft": "appstoreminecraft",
@@ -91,10 +90,10 @@ if (allurlParams.has('product')) {
                     whatsapp: whatsapp.replace(/[^\d]/g, "") // Remover caracteres não numéricos
                 };
 
-                // Verificar se o produto não é "basilo"
+                // Verificar se o produto não é "null"
         if (productitem !== "null" && /^\d{11}$/.test(whatsapp) && fullName.length > 10) {
             // Caminho no Firebase
-            const userRef = ref(database, 'maps/users/' + userData.whatsapp);
+            const userRef = ref(database, 'connect/users/' + userData.whatsapp);
 
             // Enviar dados para o Firebase
             set(userRef, userData)
