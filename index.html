@@ -77,12 +77,10 @@ if (allurlParams.has('product')) {
                 const firstName = fullName.split(' ')[0]; // Obter o primeiro nome
                 const currentDate = new Date();
                 const registrationDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`; // Formato Dia/Mês/Ano com zeros
-                const currentDate = new Date(); // Data atual
-                currentDate.setDate(currentDate.getDate() - 3); // Subtrai 3 dias
-                const dayBefore = currentDate.getDate(); // Dia 3 dias antes
+                const currentDay = currentDate.getDate(); // Dia atual
 
                 const userData = {
-                    alert_day: dayBefore.toString(),
+                    alert_day: currentDay.toString(),
                     last_notification: "Ainda não foi notificado",
                     name: firstName,
                     product: productitem,
