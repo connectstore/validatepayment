@@ -126,7 +126,7 @@ Detalhes do pedido
 1x R$ ${price} (${product})
 1x R$ ${fee} (Taxa de processamento)`;
 
-        window.open(`https://wa.me/+5533998391907?text=${encodeURIComponent(message)}`, '_blank');
+        window.location.href = `https://wa.me/+5533998391907?text=${encodeURIComponent(message)}`;
     }
     
         // Função para mostrar uma notificação
