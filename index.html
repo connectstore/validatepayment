@@ -32,6 +32,37 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         
+        //Verificar ID
+        function generateId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+        
+        // Função para gerar e salvar a id se ela ainda não existir ou se já tiver expirado
+function getId() {
+    const storedData = localStorage.getItem("userId");
+    
+    if (storedData) {
+        const { id, expires } = JSON.parse(storedData);
+        const now = new Date().getTime();
+
+        // Verifica se o id ainda é válido (dentro do período de 24 horas)
+        if (now < expires) {
+            return id; // Retorna o id existente
+        }
+    }
+
+    // Caso contrário, gera um novo id e define o prazo de validade de 24 horas
+    const id = generateId();
+    const expires = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+
+    // Salva o id e a data de expiração no localStorage
+    localStorage.setItem("userId", JSON.stringify({ id, expires }));
+
+    return id;
+}
+
+       let id = getId();
+       
         // Iniciar os dados 
          const urlParams = new URLSearchParams(window.location.search);
          const product = urlParams.get('product') || 'Produto';
@@ -72,7 +103,7 @@ if (allurlParams.has('product')) {
 }
         // Função para enviar os dados para o Firebase
         document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("wpp-btn").addEventListener("click", function() {
+            document.getElementById("wpp-btn").addEventListener("click", function(event) {
                 const fullName = document.getElementById("fullName").value;
                 const whatsapp = document.getElementById("whatsapp").value;
                 const firstName = fullName.split(' ')[0]; // Obter o primeiro nome
@@ -98,17 +129,34 @@ if (allurlParams.has('product')) {
             // Enviar dados para o Firebase
             set(userRef, userData)
                 .then(() => {
-                    validatePayment();
+                    sendPaymentNotification();
                 })
                 .catch((error) => {
-                    validatePayment();
+                    sendPaymentNotification();
                 });
         } else {
-        	validatePayment();
+        	sendPaymentNotification();
         }
     });
 });
             
+    function isValidCPF(cpf) {
+        cpf = cpf.replace(/[^\d]/g, "");
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+        
+        let sum = 0, remainder;
+        for (let i = 1; i <= 9; i++) sum += parseInt(cpf[i - 1]) * (11 - i);
+        remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        if (remainder !== parseInt(cpf[9])) return false;
+        
+        sum = 0;
+        for (let i = 1; i <= 10; i++) sum += parseInt(cpf[i - 1]) * (12 - i);
+        remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        return remainder === parseInt(cpf[10]);
+    }
+
         // Validar via WhatsApp 
         function validatePayment() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -141,6 +189,55 @@ Detalhes do pedido
                 toast.classList.remove("show");
             }, 3000);
         }
+       
+        // Enviar no Telegram 
+        function sendPaymentNotification() {
+       showToast("Por favor, aguarde um instante...");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const product = document.querySelector('.product-name').textContent;
+    const price = urlParams.get('price') || '0';
+    const payment = urlParams.get('payment') || '0';
+    const fee = payment - price;
+    const fullName = document.getElementById("fullName").value;
+   const CPF = document.getElementById("CPF").value;
+   const number = document.getElementById("whatsapp").value;
+    const message = `Novo pagamento identificado #${id}\n\nCliente\nNome: ${fullName}\nCPF: ${CPF}\nWhatsApp: ${number}\n\nDetalhes do pedido\n1x R$ ${price} (${product})\n1x R$ ${fee} (Taxa de processamento)`;
+    const botAPI = '7545115815:AAH3stNlXkfuDTu4TQH0e4CZb09Amx57oQw';
+    const chatId = '-1002469985309';
+
+    // Verifica se a notificação já foi enviada para esse ID
+    if (localStorage.getItem(`notification_${id}`) === 'true') {
+    	validatePayment();
+        // Notificação ja enviada
+        return; // Impede o envio repetido
+    }
+
+    // Enviando a mensagem via BotAPI do Telegram
+    fetch(`https://api.telegram.org/bot${botAPI}/sendMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            // Salva no localStorage que a notificação foi enviada para esse ID
+            localStorage.setItem(`notification_${id}`, 'true');
+            validatePayment();
+        } else {
+            validatePayment();
+        }
+    })
+    .catch(error => {
+        validatePayment();
+    });
+}
     </script>
     <style>
         * {
