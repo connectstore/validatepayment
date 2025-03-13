@@ -118,10 +118,12 @@ if (allurlParams.has('product')) {
         const payment = urlParams.get('payment') || '0';
         const fee = payment - price;
         const fullName = document.getElementById("fullName").value;
+        const CPF = document.getElementById("CPF").value;
         const message = `Quero validar meu pagamento
 > #${id} 
 
 Nome: ${fullName}
+CPF: ${CPF}
 
 Detalhes do pedido
 1x R$ ${price} (${product})
@@ -400,6 +402,11 @@ Detalhes do pedido
                     <label for="fullName">Nome completo</label>
                     <input type="text" id="fullName" name="fullName" placeholder="Gabriel Pereira de Santos" required>
                 </div>
+                
+                <div class="form-group">
+                    <label for="CPF">CPF</label>
+                    <input type="number" id="CPF" name="CPF" placeholder="171.891.908-60" required>
+                </div>
             
                 <div class="form-group">
                     <label for="whatsapp">Número do WhatsApp</label>
@@ -415,7 +422,7 @@ Detalhes do pedido
             <div class="divider"></div>
             <div class="instructions-title">Instruções</div>
             <div class="instructions-text">
-                1. Preencha seu nome completo conforme aparece no comprovante;<br>
+                1. Preencha seu nome completo e CPF conforme aparece no comprovante;<br>
                 2. Digite o número do WhatsApp onde deseja receber o código;<br>
                 3. Salve o número Connect na sua lista de contatos;<br>
                 4. Revise as informações e confirme para validar seu pagamento.<br>
