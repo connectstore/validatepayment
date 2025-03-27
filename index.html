@@ -104,6 +104,15 @@ if (allurlParams.has('product')) {
         // Função para enviar os dados para o Firebase
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("wpp-btn").addEventListener("click", function(event) {
+            	const full_Name = document.getElementById("fullName").value; 
+if (full_Name.length < 5) { 
+alert("Por gentileza, informe seu nome completo conforme aparece no comprovante de transferência do PIX."); 
+document.getElementById("fullName").style.border = "2px solid red"; 
+return; 
+} 
+        	
+document.getElementById("fullName").style.border = "2px solid green";
+
                 const fullName = document.getElementById("fullName").value;
                 const whatsapp = document.getElementById("whatsapp").value;
                 const firstName = fullName.split(' ')[0]; // Obter o primeiro nome
@@ -159,15 +168,6 @@ if (allurlParams.has('product')) {
 
         // Validar via WhatsApp 
         function validatePayment() { 
-const fullName = document.getElementById("fullName").value; 
-if (fullName.length < 5) { 
-alert("Por gentileza, informe seu nome completo conforme aparece no comprovante de transferência do PIX."); 
-document.getElementById("fullName").style.border = "2px solid red"; 
-return; 
-} 
-
-document.getElementById("fullName").style.border = "2px solid green";
-
 const urlParams = new URLSearchParams(window.location.search);
 const product = document.querySelector('.product-name').textContent;
 const price = urlParams.get('price') || '0';
