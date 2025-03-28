@@ -103,15 +103,24 @@ if (allurlParams.has('product')) {
 }
         // Função para enviar os dados para o Firebase
         document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("wpp-btn").addEventListener("click", function(event) {
-            	const full_Name = document.getElementById("fullName").value; 
-if (full_Name.length < 5) { 
-alert("Para atender às exigências fiscais para a emissão da sua nota fiscal de serviço e do código do cartão pré-pago, informe seu nome completo exatamente como consta no comprovante, além do seu CPF e número de WhatsApp."); 
-document.getElementById("fullName").style.border = "2px solid red"; 
-return; 
-} 
-        	
-document.getElementById("fullName").style.border = "2px solid green";
+        document.getElementById("wpp-btn").addEventListener("click", function(event) {
+        const full_Name = document.getElementById("fullName").value; 
+        const full_wpp = document.getElementById("whatsapp").value; 
+
+        document.getElementById("fullName").style.border = "1px solid #ccc";
+        document.getElementById("whatsapp").style.border = "1px solid #ccc";
+                
+             if(full_Name.length < 5){ 
+                  alert("Para atender às exigências fiscais para a emissão da sua nota fiscal de serviço e do código do cartão pré-pago, informe seu nome completo exatamente como consta no comprovante, além do seu CPF e número de WhatsApp."); 
+                  document.getElementById("fullName").style.border = "2px solid red"; 
+                  return; 
+                } 
+                
+                if(full_wpp.length < 5){ 
+                  alert("Para fins comerciais e para o envio do seu código Gift Card, informe, por gentileza, seu número de WhatsApp com DDD."); 
+                  document.getElementById("whatsapp").style.border = "2px solid red"; 
+                  return; 
+                }               
 
                 const fullName = document.getElementById("fullName").value;
                 const whatsapp = document.getElementById("whatsapp").value;
