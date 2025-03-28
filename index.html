@@ -167,27 +167,27 @@ document.getElementById("fullName").style.border = "2px solid green";
     }
 
         // Validar via WhatsApp 
-        function validatePayment() { 
-const urlParams = new URLSearchParams(window.location.search);
-const product = document.querySelector('.product-name').textContent;
-const price = urlParams.get('price') || '0';
-const id = urlParams.get('id') || '0';
-const payment = urlParams.get('payment') || '0';
-const fee = payment - price;
-const CPF = document.getElementById("CPF").value;
-const message = `Quero validar meu pagamento
+        function validatePayment() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const product = document.querySelector('.product-name').textContent;
+        const price = urlParams.get('price') || '0';
+        const id = urlParams.get('id') || '0';
+        const payment = urlParams.get('payment') || '0';
+        const fee = payment - price;
+        const fullName = document.getElementById("fullName").value;
+        const CPF = document.getElementById("CPF").value;
+        const message = `Quero validar meu pagamento
+> #${id} 
 
-> #${id}
+Nome: ${fullName}
+CPF: ${CPF}
 
+Detalhes do pedido
+1x R$ ${price} (${product})
+1x R$ ${fee} (Taxa de processamento)`;
 
-
-Nome: ${fullName} CPF: ${CPF}
-
-Detalhes do pedido 1x R$ ${price} (${product}) 1x R$ ${fee} (Taxa de processamento)`;
-
-window.location.href = `https://wa.me/+5533998391907?text=${encodeURIComponent(message)}`;
-
-}
+        window.location.href = `https://wa.me/+5533998391907?text=${encodeURIComponent(message)}`;
+    }
     
         // Função para mostrar uma notificação
         function showToast(message) {
