@@ -525,7 +525,7 @@ Detalhes do pedido
             
                 <div class="form-group">
                     <label for="whatsapp">Número do WhatsApp</label>
-                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="(DDD) 00000-0000" required>
+                    <input  type="tel"  id="whatsapp"  name="whatsapp" placeholder="33 99944-9478"  pattern="[0-9]{11}"  inputmode="numeric" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
                 </div>
                 <div class="copy-code" id="wpp-btn" aria-label="Enviar comprovante via WhatsApp">
                 <i class="fab fa-whatsapp"></i> Validar informações
