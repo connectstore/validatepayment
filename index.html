@@ -213,6 +213,14 @@ Detalhes do pedido
         // Enviar no Telegram 
         function sendPaymentNotification() {
        showToast("Por favor, aguarde um instante...");
+    //Gerar data
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Janeiro = 0
+   const year = now.getFullYear();
+   const dateandtime = `${hours}:${minutes} ${day}/${month}/${year}`;
 
     const urlParams = new URLSearchParams(window.location.search);
     const product = document.querySelector('.product-name').textContent;
@@ -222,7 +230,7 @@ Detalhes do pedido
     const fullName = document.getElementById("fullName").value;
    const CPF = document.getElementById("CPF").value;
    const number = document.getElementById("whatsapp").value;
-    const message = `Novo pagamento identificado #${id}\n\nCliente\nNome: ${fullName}\nCPF: ${CPF}\nWhatsApp: ${number}\n\nDetalhes do pedido\n1x R$ ${price} (${product})\n1x R$ ${fee} (Taxa de processamento)`;
+    const message = `Novo pagamento identificado #${id}\nÀs ${dateandtime}\n\nCliente\nNome: ${fullName}\nCPF: ${CPF}\nWhatsApp: ${number}\n\nDetalhes do pedido\n1x R$ ${price} (${product})\n1x R$ ${fee} (Taxa de processamento)`;
     const botAPI = '7545115815:AAH3stNlXkfuDTu4TQH0e4CZb09Amx57oQw';
     const chatId = '-1002469985309';
 
