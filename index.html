@@ -53,7 +53,7 @@ function getId() {
 
     // Caso contrário, gera um novo id e define o prazo de validade de 24 horas
     const id = generateId();
-    const expires = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+    const expires = new Date().getTime() + 10 * 60 * 1000; // 10 minutos em milissegundos
 
     // Salva o id e a data de expiração no localStorage
     localStorage.setItem("userId", JSON.stringify({ id, expires }));
